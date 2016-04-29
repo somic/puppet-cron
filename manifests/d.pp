@@ -75,6 +75,7 @@ define cron::d (
   $normalize_path=hiera('cron::d::normalize_path', false),
   $comment='',
   $env={},
+  $missing_user_warning=hiera('cron::d::missing_user_warning', true),
 ) {
   validate_cron_numeric($second)
   validate_cron_numeric($minute)
@@ -82,11 +83,16 @@ define cron::d (
   validate_cron_numeric($dom)
   validate_cron_numeric($month)
   validate_cron_numeric($dow)
+  validate_bool($missing_user_warning)
 
   validate_bool($log_to_syslog,$lock)
 
   if $mailto == '' {
     fail('You must provide a value for MAILTO. Did you mean mailto=\'""\'?')
+  }
+
+  if $missing_user_warning and !defined(User[$user]) {
+    warning("Cronjob runs as user ${user} but User['${user}'] is not defined")
   }
 
   $safe_name = regsubst($name, ':', '_', 'G')
