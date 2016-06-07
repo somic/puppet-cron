@@ -98,7 +98,7 @@ define cron::d (
   $safe_name = regsubst($name, ':', '_', 'G')
   $reporting_name = "cron_${safe_name}"
 
-  if $staleness_threshold {
+  if $staleness_threshold and defined(Class['sensu']) {
     $actual_command = "/nail/sys/bin/success_wrapper '${reporting_name}' ${command}"
 
     cron::staleness_check { $reporting_name:

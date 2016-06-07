@@ -26,3 +26,4 @@ define monitoring_check (
     $aggregate             = false,
     $sensu_custom          = {},
 ) {}
+class sensu {}

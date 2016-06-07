@@ -7,7 +7,7 @@ describe 'cron::d' do
     :lsbdistid => 'Ubuntu',
     :lsbdistrelease => '14.04',
   }}
-  let(:pre_condition) { [(site_pp rescue ""), "class { 'cron': }"] }
+  let(:pre_condition) { [(site_pp rescue ""), "class { ['sensu','cron']: }"] }
   let(:params) {{
     :minute  => 37,
     :user    => 'somebody',
@@ -45,6 +45,22 @@ describe 'cron::d' do
       should contain_file('/nail/etc/cron.d/foobar') \
         .with_content(/success_wrapper 'cron_foobar'/)
       should contain_cron__staleness_check('cron_foobar')
+    }
+  end
+
+  context 'with staleness when Class["sensu"] is not defined' do
+    let(:params) {{
+      :minute    => 37,
+      :user      => 'somebody',
+      :command   => 'foobar | logger -t cleanup-srv-deploy -p daemon.info',
+      :staleness_threshold => '10m',
+      :staleness_check_params => { 'runbook' => 'y/rb-foobar' },
+    }}
+    let(:pre_condition) { [(site_pp rescue ""), "class { 'cron': }"] }
+    it {
+      should have_cron__staleness_check_resource_count(0)
+      should contain_file('/nail/etc/cron.d/foobar') \
+        .with_content(/(?!success_wrapper)/)
     }
   end
 

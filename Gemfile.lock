@@ -207,7 +207,7 @@ GEM
     ipaddress (0.8.3)
     json (1.8.3)
     json_pure (1.8.3)
-    jwt (1.5.3)
+    jwt (1.5.4)
     launchy (2.4.3)
       addressable (~> 2.3)
     listen (3.0.6)
